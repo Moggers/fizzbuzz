@@ -92,20 +92,20 @@ void * fizzbuzz_routine( void * arg )
 
 void fizzbuzz_start( int from, int to, int thread_count )
 {
-	pthread_t ** threads = calloc( thread_count, sizeof( pthread_t* ) );
-	int li_createthread, li_jointhread;
-	struct fizzbuzz_args args = { from, ceil((double)(to - from) / thread_count) + from };
+	pthread_t ** threads = calloc( thread_count, sizeof( pthread_t* ) ); // Create a list of pointers to pthreads
+	int li_createthread, li_jointhread; // Loop iterators for the thread creation and joining
+	struct fizzbuzz_args args = { from, ceil((double)(to - from) / thread_count) + from }; // Arguments to be passed to the threads, from starts at from, to starts at the final number, divided by the number of workers and ceiled
 	printf( "Operating fizzbuzz, starting at %d, ending at %d, and split into %d threads with each checking %d entries. \nThe last worker thread will have its jobs shortened where the job count is not divisable by the worker count.\n", from, to, thread_count, (int)ceil((double)(to-from) / thread_count) );
 
 	for(li_createthread = 0; li_createthread < thread_count; li_createthread++ )
 	{
-		threads[li_createthread] = malloc( sizeof( pthread_t ) );
-		pthread_create( threads[li_createthread], NULL, &fizzbuzz_routine, &(struct fizzbuzz_args){args.from, args.to} );
+		threads[li_createthread] = malloc( sizeof( pthread_t ) ); // Allocate thread in memory
+		pthread_create( threads[li_createthread], NULL, &fizzbuzz_routine, &(struct fizzbuzz_args){args.from, args.to} ); // Begin thread, reading in the arguments as a pointer to a compound literal containing the previously defined arguments, this is to keep them unique.
 		printf( "Created thread %d\n", li_createthread );
 
-		args.from = args.to + 1;
-		args.to = args.to + ceil((double)(to - from) / thread_count);
-		if( args.to > to ) { args.to = to; }
+		args.from = args.to + 1; // Move args.from for the next worker to the position one after the current
+		args.to = args.to + ceil((double)(to - from) / thread_count); // Move to, to the next batch which is the jobs divided by the number of worker threads (i.e. 0-30, 2 threads, first job is 0-15, second job is then 15-30)
+		if( args.to > to ) { args.to = to; } // In the event that we have a job number not divisible by the number of workers, we truncate the final worker
 	}
 
 	printf( "Working..\n" );
