@@ -104,7 +104,7 @@ void fizzbuzz_start( int from, int to, int thread_count )
 		printf( "Created thread %d\n", li_createthread );
 
 		args.from = args.to + 1; // Move args.from for the next worker to the position one after the current
-		args.to = args.to + ceil((double)(to - from) / thread_count); // Move to, to the next batch which is the jobs divided by the number of worker threads (i.e. 0-30, 2 threads, first job is 0-15, second job is then 15-30)
+		args.to = args.to + ceil((double)(to - from) / thread_count); // Move to, to the next batch which is the jobs divided by the number of worker threads (i.e. 0-30, 2 threads, first job is 0-15, second job is then 16-30)
 		if( args.to > to ) { args.to = to; } // In the event that we have a job number not divisible by the number of workers, we truncate the final worker
 	}
 
